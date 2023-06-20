@@ -14,12 +14,11 @@ class CronExpression:
     
 
     def listTimes(self, times: list[str], lowerBound: int, upperBound: int):
-        # Check if the user entered the times in the correct order when using a ','. 
-        # If so we then check they confine within the bounds. Then return as no change
+        # Sort the list incase user entered times in the wrong order when using a ','. 
+        # We then check if they confine within the upper/lower bounds. Then return as no change
         # is needed.
+        times.sort(key=int)
 
-        if(sorted(times, key=int) != times):
-            self.terminate()
         self.checkBounds(int(times[0]), lowerBound, int(times[-1]), upperBound)
         return times
     
@@ -78,7 +77,7 @@ class CronExpression:
                 # Add all times to list if asterisk.
                 self.times.append(self.getAllTimeBounds(lowerTimeBound, upperTimeBound))
                 continue
-            
+
             dividerPresent = False
             for divider in self.dividerFuncs.keys():
                 if(divider in field):
@@ -91,7 +90,7 @@ class CronExpression:
             if not dividerPresent:
                 if not field.isnumeric():
                     self.terminate()
-
+                self.checkBounds(int(field), lowerTimeBound, int(field), upperTimeBound)
                 self.times.append([field])
         return self.times
 
